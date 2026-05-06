@@ -4,7 +4,7 @@
 # Required repository secrets:
 #   NGC_API_KEY            NVIDIA API key used to pull images and populate
 #                          NVIDIA_API_KEY in .env.
-#   BLUEPRINT_GITHUB_TEST  NVIDIA API key with pull access to
+#   TEST_DOCKER_PULL_KEY   NVIDIA API key with pull access to
 #                          nvcr.io/rw983xdqtcdp/auto_test_team/blueprint-github-test-image.
 #                          If unset, the test step is skipped.
 #
@@ -51,11 +51,11 @@ jobs:
 
       - name: Run UI automation tests
         env:
-          BLUEPRINT_GITHUB_TEST: ${{ secrets.BLUEPRINT_GITHUB_TEST }}
+          TEST_DOCKER_PULL_KEY: ${{ secrets.TEST_DOCKER_PULL_KEY }}
         run: |
           set -euo pipefail
-          [ -n "${BLUEPRINT_GITHUB_TEST:-}" ] || exit 0
-          echo "${BLUEPRINT_GITHUB_TEST}" | docker login nvcr.io -u '$oauthtoken' --password-stdin
+          [ -n "${TEST_DOCKER_PULL_KEY:-}" ] || exit 0
+          echo "${TEST_DOCKER_PULL_KEY}" | docker login nvcr.io -u '$oauthtoken' --password-stdin
           docker pull "${QA_TEST_IMAGE}"
           docker run --rm --net=host -v "$(pwd):/workspace" "${QA_TEST_IMAGE}" \
             pytest -m retail_agentic_commerce \
